@@ -33,6 +33,10 @@ class Player:
         self.ressources[stock] += amount
         self.wallet -= amount * stockPrice[stock]
 
+    def sellAction(self, stock, amount):
+        self.ressources[stock] -= amount
+        self.wallet += amount * stockPrice[stock]
+
     def displayWallet(self):
         print("==================")
         print(f"Wallet: {self.wallet}")
@@ -42,34 +46,50 @@ class Player:
             print(f"    {k.capitalize()}: {v}")
         print("==================")
 
+def askUser(message, choices):
+    choice = input(f"{message} ({' | '.join(choices)}): ")
+    while choice not in choices:
+        choice = input(f"{message} ({' | '.join(choices)}): ")
+    return choice
 
-def actOnStock(player, stock):
-    print("==================")
-    print(f"{stock.capitalize()}")
-    print("==================")
-    choice = input("You want to buy or sell (b | s): ")
-    while choice not in ["b", "s"]:
-        choice = input("You want to buy or sell (b | s): ")
-    amount = int(input("How many: "))
-    while math.isnan(amount):
-        amount = int(input("How many: "))
-    if (choice == "b"):
-        player.buyAction(stock, amount)
-    else:
-        print("e")
+def askUserAmount(message, min, max):
+    choice = int(input(f"{message} (min: {min} | max: {max}): "))
+    while math.isnan(choice) or choice < min or choice > max :
+        choice = int(input(f"{message} (min: {min} | max: {max}): "))
+    return choice
 
 def runRound(player):
-    choice = input("Sur quelle action voulez vous agir (g | t | r): ")
-    while choice not in ["g", "t", "r"]:
-        choice = input("Sur quelle action voulez vous agir (g | t | r): ")
-    actOnStock(player, stocks[choice])
+    action = askUser("Do you want to buy or sell ?", ["b", "s"])
+    selectedStock = stocks[askUser("Sur quelle action voulez vous agir", ["g", "t", "r"])]
+
+    while player.ressources[selectedStock] == 0 and action == "s":
+        print("You don't have any of this ressource.")
+        action = askUser("Do you want to buy or sell ?", ["b", "s"])
+        selectedStock = stocks[askUser("Sur quelle action voulez vous agir", ["g", "t", "r"])]
+
+
+    print("==================")
+    print(f"{selectedStock.capitalize()}")
+    print("==================")
+
+    if (action == "b"):
+        amount = askUserAmount("How many ?", 0, 10 - sum(player.ressources.values()))
+        player.buyAction(selectedStock, amount)
+    else:
+        amount = askUserAmount("How many ?", 0, player.ressources[selectedStock])
+        player.sellAction(selectedStock, amount)
 
 
 def startGame():
     player = Player("Raph")
     player.displayWallet()
-    runRound(player)
-    player.displayWallet()
+
+    round = 0
+    while round <= 10:
+        round += 1
+        runRound(player)
+        player.displayWallet()
+
 
 
 if __name__ == "__main__":
