@@ -1,48 +1,21 @@
-import math
 from time import sleep
-from classes import Ressource, Market, Player
+from classes import Game
+from commands import handleBuyCommand
+from utils import askUser, askUserAmount
 
 
-stocks = {
-    "g": "gold",
-    "t": "tokens",
-    "r": "RAM"
-}
-
-stockPrice = {
-    "gold": 7,
-    "tokens": 4,
-    "RAM": 12
-}
-
-def askUser(message, choices):
-    choice = input(f"{message} ({' | '.join(choices)}): ")
-    while choice not in choices:
-        choice = input(f"{message} ({' | '.join(choices)}): ")
-    return choice
-
-def askUserAmount(message, min, max):
-    choice = int(input(f"{message} (min: {min} | max: {max}): "))
-    while math.isnan(choice) or choice < min or choice > max :
-        choice = int(input(f"{message} (min: {min} | max: {max}): "))
-    return choice
-
-def runRound(player):
+def runRound(game):
     end = 0
 
     while end == 0:
         command = input("/").split(" ")
-        return ;
-        if(command[0] == "buy"):
-            selectedStock = stocks[askUser("Sur quelle action voulez vous agir", ["g", "t", "r"])]
 
-            print("==================")
-            print(f"{selectedStock.capitalize()}")
-            print("==================")
-            amount = askUserAmount("How many ?", 0, 10 - sum(player.ressources.values()))
-            player.buyRessource(selectedStock, amount)
+        if(command[0] == "buy"):
+            command.pop(0)
+            handleBuyCommand(command,game)
 
         elif command[0] == "sell" :
+            return
             selectedStock = stocks[askUser("Sur quelle action voulez vous agir", ["g", "t", "r"])]
 
             if player.ressources[selectedStock] == 0:
@@ -53,26 +26,20 @@ def runRound(player):
             print(f"{selectedStock.capitalize()}")
             print("==================")
             amount = askUserAmount("How many ?", 0, player.ressources[selectedStock])
-            player.sellRessource(selectedStock, amount)
+            player.sellRessource(game.stockRessources[selectedStock], amount)
         else :
             print("Invalid command.")
             continue
 
 
 def startGame():
-    player = Player("Raph")
-
-    gold = Ressource("gold", 9)
-    tokens = Ressource("tokens", 5)
-    ram = Ressource("RAM", 14)
-
-    market = Market([gold, tokens, ram])
+    game = Game("Raph")
 
     round = 0
     while round <= 10:
         round += 1
-        market.displayMarket()
-        runRound(player)
+        game.market.displayMarket()
+        runRound(game)
         player.displayWallet()
         sleep(3)
 

@@ -57,3 +57,19 @@ class Player:
         for [k, v] in self.ressources.items():
             print(f"    {k.capitalize()}: {v}")
         print("==================")
+
+class Game:
+    def __init__(self, player_name):
+        self.player = Player(player_name)
+
+        gold = Ressource("gold", 9)
+        tokens = Ressource("tokens", 5)
+        ram = Ressource("RAM", 14)
+
+        self.market = Market([gold, tokens, ram])
+
+        self.stockRessources = {
+            "gold": gold,
+            "tokens": tokens,
+            "RAM": ram
+        }
