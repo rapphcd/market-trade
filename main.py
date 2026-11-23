@@ -1,4 +1,8 @@
 import math
+from time import sleep
+
+import matplotlib.pyplot as plt
+import numpy as np
 
 stocks = {
     "g": "gold",
@@ -12,6 +16,24 @@ stockPrice = {
     "RAM": 12
 }
 
+class Ressource:
+    def __init__(self, n, p):
+        self.name = n
+        self.price = p
+        self.oldPrice = p
+
+
+class Market:
+    def __init__(self, r):
+        self.ressources = r
+
+    def displayMarket(self):
+        print("==================")
+        print("Market")
+        print("------------------")
+        for ressource in self.ressources:
+            print(f"{ressource.name.capitalize()}: {ressource.price}$")
+        print("==================")
 
 class Player:
     def __init__(self, user_name):
@@ -82,15 +104,18 @@ def runRound(player):
 
 def startGame():
     player = Player("Raph")
-    player.displayWallet()
+    gold = Ressource("gold", 9)
+    tokens = Ressource("tokens", 5)
+    ram = Ressource("RAM", 14)
+    market = Market([gold, tokens, ram])
 
     round = 0
     while round <= 10:
         round += 1
+        market.displayMarket()
         runRound(player)
         player.displayWallet()
-
-
+        sleep(3)
 
 if __name__ == "__main__":
     startGame()
