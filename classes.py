@@ -1,3 +1,5 @@
+from random import  randint
+
 class Resource:
     def __init__(self, n, p):
         self.name = n
@@ -10,6 +12,7 @@ class Resource:
 class Market:
     def __init__(self, r):
         self.resources = r
+        self.nextResources = r
 
     def displayMarket(self):
         print("==================")
@@ -18,6 +21,26 @@ class Market:
         for resource in self.resources:
             print(f"{resource.displayName()}: {resource.price}$")
         print("==================")
+
+    def prepareNextMarket(self):
+        nextResources = []
+        for res in self.resources:
+            direction = randint(0,1)
+            amount = randint(2, 10)
+
+            if direction == 1:
+                res.price += amount
+            else:
+                if res.price <= amount:
+                    res.price = 1
+                else:
+                    res.price -= amount
+
+            nextResources.append(res)
+        self.nextResources = nextResources
+
+    def updateMarket(self):
+        self.resources = self.nextResources
 
 class Player:
     def __init__(self, user_name):
@@ -62,9 +85,9 @@ class Game:
     def __init__(self, player_name):
         self.player = Player(player_name)
 
-        gold = Resource("gold", 9)
-        tokens = Resource("tokens", 5)
-        ram = Resource("RAM", 14)
+        gold = Resource("gold", 30)
+        tokens = Resource("tokens", 30)
+        ram = Resource("RAM", 30)
 
         self.market = Market([gold, tokens, ram])
 
@@ -73,3 +96,16 @@ class Game:
             "tokens": tokens,
             "RAM": ram
         }
+
+    def end(self):
+        self.player.displayWallet()
+        money = self.player.wallet
+        for res in self.player.resources.values():
+            money += res
+        won = "won"
+        if money < 500 :
+            won = "lost"
+
+        print("==================")
+        print(f"You {won} with {money}$")
+        print("==================")
