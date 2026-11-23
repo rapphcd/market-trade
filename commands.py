@@ -1,19 +1,16 @@
 import math
 
-from classes import Player
-from utils import askUser, askUserAmount, stocks
-
 def handleBuyCommand(args, game):
     player = game.player
 
     if len(args) < 2:
-        print("Invalid args: /buy <ressource> <amount>")
+        print("Invalid args: /buy <resource> <amount>")
         return
 
-    ressource = args[0]
+    resource = args[0]
     amount = int(args[1])
 
-    if ressource not in game.stockRessources.keys():
+    if resource not in game.stockResources.keys():
         print("Invalid resource.")
         return
     if math.isnan(amount):
@@ -22,27 +19,27 @@ def handleBuyCommand(args, game):
     if amount <= 0 :
         print("Too low.")
         return
-    if amount > 10 - sum(player.ressources.values()):
+    if amount > 10 - sum(player.resources.values()):
         print("Too big.")
         return
 
     print("==================")
-    print(f"Bought {amount} {ressource.capitalize()} for {amount*game.stockRessources[ressource].price}$")
+    print(f"Bought {amount} {resource.capitalize()} for {amount*game.stockResources[resource].price}$")
     print("==================")
 
-    player.buyRessource(game.stockRessources[ressource], amount)
+    player.buyResource(game.stockResources[resource], amount)
 
 def handleSellCommand(args, game):
     player = game.player
 
     if len(args) < 2:
-        print("Invalid args: /sell <ressource> <amount>")
+        print("Invalid args: /sell <resource> <amount>")
         return
 
-    ressource = args[0]
+    resource = args[0]
     amount = int(args[1])
 
-    if ressource not in game.stockRessources.keys():
+    if resource not in game.stockResources.keys():
         print("Invalid resource.")
         return
     if math.isnan(amount):
@@ -51,12 +48,15 @@ def handleSellCommand(args, game):
     if amount <= 0:
         print("Too low.")
         return
-    if amount > player.ressources[ressource]:
+    if amount > player.resources[resource]:
         print("Too big.")
         return
 
     print("==================")
-    print(f"Sold {amount} {ressource.capitalize()} for {amount * game.stockRessources[ressource].price}$")
+    print(f"Sold {amount} {resource.capitalize()} for {amount * game.stockResources[resource].price}$")
     print("==================")
 
-    player.sellRessource(game.stockRessources[ressource], amount)
+    player.sellResource(game.stockResources[resource], amount)
+
+def handleInvCommand(game):
+    game.player.displayWallet()

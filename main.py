@@ -1,6 +1,6 @@
 from time import sleep
 from classes import Game
-from commands import handleBuyCommand, handleSellCommand
+from commands import handleBuyCommand, handleSellCommand, handleInvCommand
 
 def runRound(game):
     end = 0
@@ -8,13 +8,15 @@ def runRound(game):
     while end == 0:
         command = input("/").split(" ")
 
-        if(command[0] == "buy"):
+        if command[0] == "buy":
             command.pop(0)
             handleBuyCommand(command,game)
 
         elif command[0] == "sell" :
             command.pop(0)
             handleSellCommand(command, game)
+        elif command[0] == "inv" :
+            handleInvCommand(game)
         else :
             print("Invalid command.")
             continue
