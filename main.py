@@ -1,8 +1,6 @@
 from time import sleep
 from classes import Game
-from commands import handleBuyCommand
-from utils import askUser, askUserAmount
-
+from commands import handleBuyCommand, handleSellCommand
 
 def runRound(game):
     end = 0
@@ -15,18 +13,8 @@ def runRound(game):
             handleBuyCommand(command,game)
 
         elif command[0] == "sell" :
-            return
-            selectedStock = stocks[askUser("Sur quelle action voulez vous agir", ["g", "t", "r"])]
-
-            if player.ressources[selectedStock] == 0:
-                print("You don't have any of this ressource.")
-                continue
-
-            print("==================")
-            print(f"{selectedStock.capitalize()}")
-            print("==================")
-            amount = askUserAmount("How many ?", 0, player.ressources[selectedStock])
-            player.sellRessource(game.stockRessources[selectedStock], amount)
+            command.pop(0)
+            handleSellCommand(command, game)
         else :
             print("Invalid command.")
             continue
@@ -40,7 +28,7 @@ def startGame():
         round += 1
         game.market.displayMarket()
         runRound(game)
-        player.displayWallet()
+        game.player.displayWallet()
         sleep(3)
 
 if __name__ == "__main__":
