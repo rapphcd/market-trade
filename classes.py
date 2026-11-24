@@ -106,8 +106,9 @@ class Game:
     def end(self):
         self.player.displayWallet()
         money = self.player.wallet
-        for res in self.player.resources.values():
-            money += res
+        print(self.player.resources.values())
+        for [k,v] in self.player.resources.items():
+            money += v * self.stockResources[k].price
         won = "won"
         if money < 500 :
             won = "lost"

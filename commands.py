@@ -17,7 +17,7 @@ def handleBuyCommand(args, game):
         print("Invalid resource.")
         return
 
-    if (args[1] == "max"):
+    if (args[1] == "max" or args[1] == "all"):
         amount = game.player.wallet // game.stockResources[resource].price
     else:
         amount = int(args[1])
@@ -51,7 +51,7 @@ def handleSellCommand(args, game):
         print("Invalid resource.")
         return
 
-    if (args[1] == "all"):
+    if (args[1] == "all" or args[1] == "max"):
         amount = player.resources[resource]
     else:
         amount = int(args[1])
