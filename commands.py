@@ -1,5 +1,8 @@
 import math
 
+from classes import Market
+
+
 def handleBuyCommand(args, game):
     player = game.player
 
@@ -57,6 +60,9 @@ def handleSellCommand(args, game):
     print("==================")
 
     player.sellResource(game.stockResources[resource], amount)
+
+def handleMarketCommand(game):
+    game.market.displayMarket()
 
 def handleInvCommand(game):
     game.player.displayWallet()

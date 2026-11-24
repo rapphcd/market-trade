@@ -1,6 +1,6 @@
 from time import sleep
 from classes import Game
-from commands import handleBuyCommand, handleSellCommand, handleInvCommand
+from commands import handleBuyCommand, handleSellCommand, handleInvCommand, handleMarketCommand
 
 def runRound(game):
     end = 0
@@ -16,6 +16,8 @@ def runRound(game):
             handleSellCommand(command, game)
         elif command[0] == "inv" :
             handleInvCommand(game)
+        elif command[0] == "market" :
+            handleMarketCommand(game)
         elif command[0] == "next":
             end = 1
         else :
@@ -32,11 +34,12 @@ def startGame():
         round += 1
         game.market.updateMarket()
         game.market.displayMarket()
+        print(f"Day {round}")
+        print("/buy , /sell , /inv , /market , /next")
         runRound(game)
         game.market.prepareNextMarket()
 
-
-    game.end
+    game.end()
 
 if __name__ == "__main__":
     startGame()
