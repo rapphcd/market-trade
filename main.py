@@ -1,4 +1,3 @@
-from time import sleep
 from classes import Game
 from commands import handleBuyCommand, handleSellCommand, handleInvCommand, handleMarketCommand
 
@@ -29,12 +28,12 @@ def startGame():
     game = Game("Raph")
 
     game.market.prepareNextMarket()
-    round = 0
-    while round < 1:
-        round += 1
+    day = 0
+    while day < 15:
+        day += 1
         game.market.updateMarket()
         game.market.displayMarket()
-        print(f"Day {round}")
+        print(f"Day {day}")
         print("/buy , /sell , /inv , /market , /next")
         runRound(game)
         game.market.prepareNextMarket()

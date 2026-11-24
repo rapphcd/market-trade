@@ -1,8 +1,5 @@
 import math
 
-from classes import Market
-
-
 def handleBuyCommand(args, game):
     player = game.player
 
@@ -17,7 +14,7 @@ def handleBuyCommand(args, game):
         print("Invalid resource.")
         return
 
-    if (args[1] == "max" or args[1] == "all"):
+    if args[1] == "max" or args[1] == "all":
         amount = game.player.wallet // game.stockResources[resource].price
     else:
         amount = int(args[1])
@@ -28,7 +25,7 @@ def handleBuyCommand(args, game):
     if amount <= 0 :
         print("Too low.")
         return
-    if amount > 10 - sum(player.resources.values()):
+    if amount*game.stockResources[resource].price > game.player.wallet:
         print("Too big.")
         return
 
@@ -51,7 +48,7 @@ def handleSellCommand(args, game):
         print("Invalid resource.")
         return
 
-    if (args[1] == "all" or args[1] == "max"):
+    if args[1] == "all" or args[1] == "max":
         amount = player.resources[resource]
     else:
         amount = int(args[1])
@@ -76,4 +73,4 @@ def handleMarketCommand(game):
     game.market.displayMarket()
 
 def handleInvCommand(game):
-    game.player.displayWallet()
+    game.displayPlayerWallet()

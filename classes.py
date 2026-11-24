@@ -1,58 +1,61 @@
 from random import  randint
 
+RESOURCES = ["sol", "btc", "gold", "eur", "eth"]
+
 class Resource:
     def __init__(self, n, p):
         self.name = n
         self.price = p
-        self.oldPrice = p
 
     def displayName(self):
         return self.name.capitalize()
 
 class Market:
     def __init__(self, r):
-        self.resources = r
-        self.nextResources = r
+        self.prevPrices = [e.price for e in r]
+        self.resources = r.copy()
+        self.nextPrices = [e.price for e in r]
 
     def displayMarket(self):
         print("==================")
         print("Market")
         print("------------------")
-        for resource in self.resources:
-            print(f"{resource.displayName()}: {resource.price}$")
+        for i in range(len(self.resources)):
+            resource = self.resources[i]
+            old_price = self.prevPrices[i]
+
+            print(f"{resource.displayName()}: {resource.price}$   {"+" if resource.price > old_price else ""}{resource.price - old_price}$")
         print("==================")
 
     def prepareNextMarket(self):
-        nextResources = []
+        nextPrices = []
         for res in self.resources:
             direction = randint(0,1)
-            amount = randint(2, 10)
 
             if direction == 1:
-                res.price += amount
+                nextPrices.append(res.price + randint(2, 10))
             else:
-                if res.price <= amount:
-                    res.price = 1
-                else:
-                    res.price -= amount
+                nextPrices.append(res.price - max(0, randint(2, 10)))
 
-            nextResources.append(res)
-        self.nextResources = nextResources
+        self.nextPrices = nextPrices
 
     def updateMarket(self):
-        self.resources = self.nextResources
+        self.prevPrices = [e.price for e in self.resources]
+
+        for i in range(len(self.resources)):
+            self.resources[i].price = self.nextPrices[i]
 
 class Player:
     def __init__(self, user_name):
         self.wallet = 100
         self.name = user_name
-        self.resources = {
-            "sol": 0,
-            "btc": 0,
-            "gold": 0,
-            "eur": 0,
-            "eth": 0
-        }
+
+        resources = {}
+
+        for resource in RESOURCES:
+            resources[resource] = 0
+
+        self.resources = resources
 
     def addMoney(self, amount):
         self.wallet += amount
@@ -74,43 +77,50 @@ class Player:
         self.removeResource(resource.name, amount)
         self.addMoney(resource.price * amount)
 
-    def displayWallet(self):
-        print("==================")
-        print(f"Wallet: {self.wallet}$")
-        print("------------------")
-        print("Stocks:")
-        for [k, v] in self.resources.items():
-            print(f"    {k.capitalize()}: {v}")
-        print("==================")
 
 class Game:
     def __init__(self, player_name):
         self.player = Player(player_name)
 
-        gold = Resource("gold", 30)
-        btc = Resource("btc", 30)
-        sol = Resource("sol", 30)
-        eur = Resource("eur", 30)
-        eth = Resource("eth", 30)
+        resources = []
+        stockResources = {}
 
-        self.market = Market([gold, btc, sol, eur, eth])
+        for resource in RESOURCES:
+            res = Resource(resource, 30)
+            resources.append(res)
+            stockResources[resource] = res
 
-        self.stockResources = {
-            "sol": sol,
-            "btc": btc,
-            "gold": gold,
-            "eur": eur,
-            "eth": eth
-        }
+        self.market = Market(resources)
+
+        self.stockResources = stockResources
+
+    def displayPlayerWallet(self):
+        player = self.player
+        total = player.wallet
+        empty = True
+
+        print("==================")
+        print(f"Wallet: {player.wallet}$")
+        print("------------------")
+
+        for [k, v] in player.resources.items():
+            total += v * self.stockResources[k].price
+            if v > 0:
+                empty = False
+                print(f"{k.capitalize()}: {v}")
+
+        if not empty:
+            print("------------------")
+        print(f"Total: : {total}$")
+        print("==================")
 
     def end(self):
         self.player.displayWallet()
         money = self.player.wallet
-        print(self.player.resources.values())
         for [k,v] in self.player.resources.items():
             money += v * self.stockResources[k].price
         won = "won"
-        if money < 500 :
+        if money < 450 :
             won = "lost"
 
         print("==================")
