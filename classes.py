@@ -47,9 +47,11 @@ class Player:
         self.wallet = 100
         self.name = user_name
         self.resources = {
+            "sol": 0,
+            "btc": 0,
             "gold": 0,
-            "tokens": 0,
-            "RAM": 0
+            "eur": 0,
+            "eth": 0
         }
 
     def addMoney(self, amount):
@@ -86,15 +88,19 @@ class Game:
         self.player = Player(player_name)
 
         gold = Resource("gold", 30)
-        tokens = Resource("tokens", 30)
-        ram = Resource("RAM", 30)
+        btc = Resource("btc", 30)
+        sol = Resource("sol", 30)
+        eur = Resource("eur", 30)
+        eth = Resource("eth", 30)
 
-        self.market = Market([gold, tokens, ram])
+        self.market = Market([gold, btc, sol, eur, eth])
 
         self.stockResources = {
+            "sol": sol,
+            "btc": btc,
             "gold": gold,
-            "tokens": tokens,
-            "RAM": ram
+            "eur": eur,
+            "eth": eth
         }
 
     def end(self):

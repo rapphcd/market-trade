@@ -30,7 +30,7 @@ def startGame():
 
     game.market.prepareNextMarket()
     round = 0
-    while round <= 10:
+    while round < 10:
         round += 1
         game.market.updateMarket()
         game.market.displayMarket()
