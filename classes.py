@@ -30,12 +30,13 @@ class Market:
     def prepareNextMarket(self):
         nextPrices = []
         for res in self.resources:
-            direction = randint(0,1)
+            gap = randint(-10,10)
+            new_price = res.price + gap
 
-            if direction == 1:
-                nextPrices.append(res.price + randint(2, 10))
-            else:
-                nextPrices.append(res.price - max(0, randint(2, 10)))
+            if new_price < 1:
+                new_price = 1
+
+            nextPrices.append(new_price)
 
         self.nextPrices = nextPrices
 
@@ -115,10 +116,12 @@ class Game:
         print("==================")
 
     def end(self):
-        self.player.displayWallet()
+        self.displayPlayerWallet()
         money = self.player.wallet
+
         for [k,v] in self.player.resources.items():
-            money += v * self.stockResources[k].price
+            money += (int(v) * int(self.stockResources[k].price))
+
         won = "won"
         if money < 450 :
             won = "lost"
