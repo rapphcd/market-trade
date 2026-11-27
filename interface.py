@@ -155,25 +155,6 @@ class Interface(customtkinter.CTk):
         canvas.get_tk_widget().grid(row=2, column=0, padx=20, pady=10, columnspan=2)
         return graph, resourcesLines, canvas
 
-    def updateGraph(self):
-        for res in self.game.market.resources:
-            self.resourcesLines[res.name], = self.graph.plot(self.game.days, self.game.prices[res.name], color=RESOURCES_COLORS[res.name], marker="o")
-
-        self.graph.relim()
-        self.graph.autoscale_view()
-
-        self.canvas.draw_idle()
-
-    def updateInvForStock(self, stock):
-        self.resourcesLabels[stock]["inv"].configure(text=f"{stock.capitalize()}: {self.game.player.resources[stock]}")
-        self.updateTotalLabel()
-
-    def updateTotalLabel(self):
-        self.totalLabel.configure(text=f"Total: {self.game.player.getTotal()}$")
-
-    def updateWalletLabel(self):
-        self.walletLabel.configure(text=f"Wallet: {self.game.player.wallet}$")
-
     def initButtons(self):
 
         for i in range(len(self.game.market.resources)):
@@ -229,3 +210,21 @@ class Interface(customtkinter.CTk):
             sell_button.grid(row=i + 1, column=1, pady=10, padx=10, sticky="e")
             sell_max.grid(row=i + 1, column=2, pady=10, padx=10, sticky="e")
 
+    def updateGraph(self):
+        for res in self.game.market.resources:
+            self.resourcesLines[res.name], = self.graph.plot(self.game.days, self.game.prices[res.name], color=RESOURCES_COLORS[res.name], marker="o")
+
+        self.graph.relim()
+        self.graph.autoscale_view()
+
+        self.canvas.draw_idle()
+
+    def updateInvForStock(self, stock):
+        self.resourcesLabels[stock]["inv"].configure(text=f"{stock.capitalize()}: {self.game.player.resources[stock]}")
+        self.updateTotalLabel()
+
+    def updateTotalLabel(self):
+        self.totalLabel.configure(text=f"Total: {self.game.player.getTotal()}$")
+
+    def updateWalletLabel(self):
+        self.walletLabel.configure(text=f"Wallet: {self.game.player.wallet}$")
