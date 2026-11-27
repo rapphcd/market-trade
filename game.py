@@ -30,8 +30,10 @@ class Game:
             res = self.market.resources[i]
             old_price = self.market.prevPrices[i]
 
-            self.interface.resourcesLabels[res.name]["infos"].configure(text=f"{res.name.capitalize()}: {res.price}")
-            self.interface.resourcesLabels[res.name]["prog"].configure(text=f"{"+" if res.price > old_price else ""}{res.price - old_price}$")
+            self.interface.resourcesLabels[res.name]["infos"].configure(text=f"{res.name.capitalize()}: {res.price}$")
+
+            if self.day > 1:
+                self.interface.resourcesLabels[res.name]["prog"].configure(text=f"{"+" if res.price > old_price else ""}{res.price - old_price}$", text_color=f"{"#00FF00" if res.price >= old_price else "#FF0000"}")
 
     def startGame(self):
 
@@ -40,9 +42,6 @@ class Game:
         self.interface.mainloop()
 
     def nextDay(self):
-        if self.day == 15:
-            self.end()
-            return
 
         self.day +=1
         self.market.prepareNextMarket()
@@ -50,18 +49,22 @@ class Game:
         self.interface.dayLabel.configure(text=f"Day {self.day}")
         self.player.updateTotalLabel()
 
+        if self.day == 16:
+            self.end()
+            return
+
+    def exit(self):
+        self.interface.destroy()
 
     def end(self):
-        money = self.player.wallet
+        money = self.player.getTotal()
 
-
-        for [k,v] in self.player.resources.items():
-            money += (int(v) * int(self.stockResources[k].price))
-
-        won = "won"
+        won = "Won"
         if money < 450 :
-            won = "lost"
+            won = "Lost"
 
-        print("==================")
-        print(f"You {won} with {money}$")
-        print("==================")
+        self.interface.invcard.destroy()
+        self.interface.marketcard.destroy()
+
+        self.interface.dayLabel.configure(text=f"{won} with {money}$")
+        self.interface.next_button.configure(text="Exit", command=self.exit)

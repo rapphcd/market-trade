@@ -70,7 +70,7 @@ class Interface(customtkinter.CTk):
             font=("Arial", 24)
         )
 
-        next_button = ctk.CTkButton(
+        self.next_button = ctk.CTkButton(
             self,
             text="Next",
             text_color="#ffffff",
@@ -78,7 +78,7 @@ class Interface(customtkinter.CTk):
             command=self.game.nextDay
         )
 
-        next_button.grid(row=0, column=1, pady=10, padx=10, sticky="e")
+        self.next_button.grid(row=0, column=1, pady=10, padx=10, sticky="e")
 
         self.totalLabel.grid(row=2, column=2, padx=50, pady=20, sticky="e")
         self.walletLabel.grid(row=4, column=2, padx=50, pady=20, sticky="e")
@@ -98,7 +98,7 @@ class Interface(customtkinter.CTk):
 
             prog = ctk.CTkLabel(
                 self.marketcard,
-                text=f"{"+" if res.price > old_price else ""}{res.price - old_price}$",
+                text="--",
                 text_color="#111111",
                 font=("Arial", 32)
             )
@@ -124,18 +124,29 @@ class Interface(customtkinter.CTk):
         for i in range(len(self.game.market.resources)):
             res = self.game.market.resources[i]
 
-            def buy_command(stock=res):
-                self.game.player.buyResource(stock, 1)
+            def buy_command():
+                self.game.player.buyResource(res, 1)
 
-            def sell_command(stock=res):
-                self.game.player.sellResource(stock, 1)
+            def buy_max_command():
+                self.game.player.buyResource(res, self.game.player.wallet // res.price)
+
+            def sell_command():
+                self.game.player.sellResource(res, 1)
 
             buy_button = ctk.CTkButton(
                 self.marketcard,
-                text="+",
+                text="Buy 1",
                 text_color="#ffffff",
                 font=("Arial", 32),
                 command=buy_command
+            )
+
+            buy_max = ctk.CTkButton(
+                self.marketcard,
+                text="Buy all",
+                text_color="#ffffff",
+                font=("Arial", 32),
+                command=buy_max_command
             )
 
             sell_button = ctk.CTkButton(
@@ -147,6 +158,7 @@ class Interface(customtkinter.CTk):
             )
 
             buy_button.grid(row=i + 1, column=3, pady=10, padx=10, sticky="e")
+            buy_max.grid(row=i + 1, column=4, pady=10, padx=10, sticky="e")
 
             sell_button.grid(row=i + 1, column=1, pady=10, padx=10, sticky="w")
 
