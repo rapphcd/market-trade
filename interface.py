@@ -1,5 +1,8 @@
 import customtkinter
 import customtkinter as ctk
+from main import RESOURCES
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
 
 customtkinter.set_appearance_mode("system")
 
@@ -10,7 +13,7 @@ class Interface(customtkinter.CTk):
         self.game = game
 
         self.title("Black Market")
-        self.geometry("1400x600")
+        self.geometry("1400x900")
         self.grid_columnconfigure((0, 1), weight=1)
 
         self.dayLabel = ctk.CTkLabel(
@@ -34,7 +37,7 @@ class Interface(customtkinter.CTk):
             border_color="#d1d1d1"
         )
 
-        self.dayLabel.grid(row=0, column=0, padx=20, pady=20, columnspan=2)
+        self.dayLabel.grid(row=0, column=0, padx=20, pady=0, columnspan=2)
         self.marketcard.grid(row=1, column=0,padx=10, sticky="nsew")
         self.invcard.grid(row=1, column=1, padx=10,  sticky="nsew")
 
@@ -87,7 +90,6 @@ class Interface(customtkinter.CTk):
 
         for i in range(len(self.game.market.resources)):
             res = self.game.market.resources[i]
-            old_price = self.game.market.prevPrices[i]
 
             infos = ctk.CTkLabel(
                 self.marketcard,
@@ -118,6 +120,37 @@ class Interface(customtkinter.CTk):
 
         self.resourcesLabels = resourcesLabels
 
+        prices = {}
+
+        for resource in RESOURCES:
+            prices[resource] = [30]
+
+        self.days = [0],
+        self.prices = prices
+
+        figure = Figure(figsize=(16, 4), dpi=100)
+        self.graph = ax = figure.add_subplot(111)
+
+        for res in self.game.market.resources:
+            self.line, = ax.plot(self.days, self.prices[res.name], color="royalblue", marker="o")
+
+        ax.set_title("Market evolution")
+        ax.set_xlabel("Day")
+        ax.set_ylabel("Price")
+        ax.grid(True, alpha=0.3)
+
+        self.canvas = FigureCanvasTkAgg(figure, master=self)
+        self.canvas.draw()
+
+        self.canvas.get_tk_widget().grid(row=2, column=0, padx=20, pady=0, columnspan=2)
+
+    def updateGraph(self):
+        self.line.set_data(self.days, self.prices)
+
+        self.graph.relim()
+        self.graph.autoscale_view()
+
+        self.canvas.draw_idle()
 
     def initButtons(self):
 
