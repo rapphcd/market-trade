@@ -13,11 +13,16 @@ class Game:
 
         resources = []
         stockResources = {}
+        prices = {}
 
         for resource in RESOURCES:
             res = Resource(resource, 30)
             resources.append(res)
             stockResources[resource] = res
+            prices[resource] = [30]
+
+        self.days = [0]
+        self.prices = prices
 
         self.market = Market(resources, self)
 
@@ -26,9 +31,12 @@ class Game:
         self.interface = Interface(self)
 
     def updatePrices(self):
+        self.days.append(self.day)
         for i in range(len(self.market.resources)):
             res = self.market.resources[i]
             old_price = self.market.prevPrices[i]
+
+            self.prices[res.name].append(res.price)
 
             self.interface.resourcesLabels[res.name]["infos"].configure(text=f"{res.name.capitalize()}: {res.price}$")
 
@@ -48,6 +56,7 @@ class Game:
         self.market.updateMarket()
         self.interface.dayLabel.configure(text=f"Day {self.day}")
         self.player.updateTotalLabel()
+        self.interface.updateGraph()
 
         if self.day == 16:
             self.end()

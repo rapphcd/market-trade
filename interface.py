@@ -1,10 +1,12 @@
 import customtkinter
 import customtkinter as ctk
-from main import RESOURCES
+from matplotlib.ticker import MultipleLocator
+
+from main import RESOURCES_COLORS
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
 
-customtkinter.set_appearance_mode("system")
+customtkinter.set_appearance_mode("light")
 
 class Interface(customtkinter.CTk):
     def __init__(self, game):
@@ -120,19 +122,18 @@ class Interface(customtkinter.CTk):
 
         self.resourcesLabels = resourcesLabels
 
-        prices = {}
-
-        for resource in RESOURCES:
-            prices[resource] = [30]
-
-        self.days = [0],
-        self.prices = prices
-
         figure = Figure(figsize=(16, 4), dpi=100)
         self.graph = ax = figure.add_subplot(111)
+        ax.xaxis.set_major_locator(MultipleLocator(1))
+        ax.set_xlim(1, 15)
+        ax.set_xticks(range(0, 16))
+
+        resourcesLines = {}
 
         for res in self.game.market.resources:
-            self.line, = ax.plot(self.days, self.prices[res.name], color="royalblue", marker="o")
+            resourcesLines[res.name], = ax.plot(self.game.days, self.game.prices[res.name], color=RESOURCES_COLORS[res.name], marker="o")
+
+        self.resourcesLines = resourcesLines
 
         ax.set_title("Market evolution")
         ax.set_xlabel("Day")
@@ -142,10 +143,11 @@ class Interface(customtkinter.CTk):
         self.canvas = FigureCanvasTkAgg(figure, master=self)
         self.canvas.draw()
 
-        self.canvas.get_tk_widget().grid(row=2, column=0, padx=20, pady=0, columnspan=2)
+        self.canvas.get_tk_widget().grid(row=2, column=0, padx=20, pady=10, columnspan=2)
 
     def updateGraph(self):
-        self.line.set_data(self.days, self.prices)
+        for res in self.game.market.resources:
+            self.resourcesLines[res.name], = self.graph.plot(self.game.days, self.game.prices[res.name], color=RESOURCES_COLORS[res.name], marker="o")
 
         self.graph.relim()
         self.graph.autoscale_view()
