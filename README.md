@@ -20,8 +20,8 @@ Use Python 3.12 or later. The desktop version also needs Tkinter. Run `python3 -
 From a macOS or Linux shell, clone the repository and activate a virtual environment.
 
 ```sh
-git clone https://github.com/rapphcd/black-market.git
-cd black-market
+git clone https://github.com/rapphcd/market-trade.git
+cd market-trade
 python3 -m venv .venv
 source .venv/bin/activate
 ```
