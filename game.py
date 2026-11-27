@@ -45,7 +45,6 @@ class Game:
 
     def nextDay(self):
         self.day +=1
-        self.market.prepareNextMarket()
         self.market.updateMarket()
         self.interface.dayLabel.configure(text=f"Day {self.day}")
         self.interface.updateTotalLabel()
