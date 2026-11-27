@@ -24,56 +24,6 @@ class Interface(customtkinter.CTk):
             text_color="#000000",
             font=("Arial", 32, "bold")
         )
-        self.marketcard = ctk.CTkFrame(
-            self,
-            corner_radius=15,
-            fg_color="#ffffff",
-            border_width=1,
-            border_color="#d1d1d1"
-        )
-        self.invcard = ctk.CTkFrame(
-            self,
-            corner_radius=15,
-            fg_color="#ffffff",
-            border_width=1,
-            border_color="#d1d1d1"
-        )
-
-        self.dayLabel.grid(row=0, column=0, padx=20, pady=0, columnspan=2)
-        self.marketcard.grid(row=1, column=0,padx=10, sticky="nsew")
-        self.invcard.grid(row=1, column=1, padx=10,  sticky="nsew")
-
-        market_title = ctk.CTkLabel(
-            self.marketcard,
-            text="Market",
-            text_color="#111111",
-            font=("Arial", 28, "bold")
-        )
-
-        market_title.grid(row=0, column=0, padx=50, pady=20)
-
-        inv_title = ctk.CTkLabel(
-            self.invcard,
-            text="Inventory",
-            text_color="#111111",
-            font=("Arial", 28, "bold")
-        )
-
-        inv_title.grid(row=0, column=0, padx=50, pady=20)
-
-        self.totalLabel = ctk.CTkLabel(
-            self.invcard,
-            text=f"Total: {self.game.player.getTotal()}$",
-            text_color="#111111",
-            font=("Arial", 24)
-        )
-
-        self.walletLabel = ctk.CTkLabel(
-            self.invcard,
-            text=f"Wallet: {self.game.player.wallet}$",
-            text_color="#111111",
-            font=("Arial", 24)
-        )
 
         self.next_button = ctk.CTkButton(
             self,
@@ -84,10 +34,70 @@ class Interface(customtkinter.CTk):
         )
 
         self.next_button.grid(row=0, column=1, pady=10, padx=10, sticky="e")
+        self.dayLabel.grid(row=0, column=0, padx=20, pady=0, columnspan=2)
 
-        self.totalLabel.grid(row=2, column=3, padx=50, pady=20, sticky="w")
-        self.walletLabel.grid(row=4, column=3, padx=50, pady=20, sticky="w")
+        self.marketcard = self.initMarket()
+        self.invcard, self.totalLabel, self.walletLabel = self.initInv()
+        self.resourcesLabels = self.initMarketRows()
+        self.graph, self.resourcesLines, self.canvas = self.initGraph()
 
+    def initMarket(self):
+        marketcard = ctk.CTkFrame(
+            self,
+            corner_radius=15,
+            fg_color="#ffffff",
+            border_width=1,
+            border_color="#d1d1d1"
+        )
+        market_title = ctk.CTkLabel(
+            marketcard,
+            text="Market",
+            text_color="#111111",
+            font=("Arial", 28, "bold")
+        )
+
+        marketcard.grid(row=1, column=0, padx=10, sticky="nsew")
+        market_title.grid(row=0, column=0, padx=50, pady=20)
+        return marketcard
+
+    def initInv(self):
+        invcard = ctk.CTkFrame(
+            self,
+            corner_radius=15,
+            fg_color="#ffffff",
+            border_width=1,
+            border_color="#d1d1d1"
+        )
+
+        inv_title = ctk.CTkLabel(
+            invcard,
+            text="Inventory",
+            text_color="#111111",
+            font=("Arial", 28, "bold")
+        )
+
+        totalLabel = ctk.CTkLabel(
+            invcard,
+            text=f"Total: {self.game.player.getTotal()}$",
+            text_color="#111111",
+            font=("Arial", 24)
+        )
+
+        walletLabel = ctk.CTkLabel(
+            invcard,
+            text=f"Wallet: {self.game.player.wallet}$",
+            text_color="#111111",
+            font=("Arial", 24)
+        )
+
+        invcard.grid(row=1, column=1, padx=10, sticky="nsew")
+        inv_title.grid(row=0, column=0, padx=50, pady=20)
+        totalLabel.grid(row=2, column=3, padx=50, pady=20, sticky="w")
+        walletLabel.grid(row=4, column=3, padx=50, pady=20, sticky="w")
+
+        return invcard, totalLabel, walletLabel
+
+    def initMarketRows(self):
         resourcesLabels = {}
 
         for i in range(len(self.game.market.resources)):
@@ -120,10 +130,11 @@ class Interface(customtkinter.CTk):
 
             resourcesLabels[res.name] = {"infos": infos, "prog": prog, "inv": inv}
 
-        self.resourcesLabels = resourcesLabels
+        return resourcesLabels
 
+    def initGraph(self):
         figure = Figure(figsize=(16, 4), dpi=100)
-        self.graph = ax = figure.add_subplot(111)
+        graph = ax = figure.add_subplot(111)
         ax.xaxis.set_major_locator(MultipleLocator(1))
         ax.set_xlim(1, 15)
         ax.set_xticks(range(0, 16))
@@ -133,17 +144,16 @@ class Interface(customtkinter.CTk):
         for res in self.game.market.resources:
             resourcesLines[res.name], = ax.plot(self.game.days, self.game.prices[res.name], color=RESOURCES_COLORS[res.name], marker="o")
 
-        self.resourcesLines = resourcesLines
-
         ax.set_title("Market evolution")
         ax.set_xlabel("Day")
         ax.set_ylabel("Price")
         ax.grid(True, alpha=0.3)
 
-        self.canvas = FigureCanvasTkAgg(figure, master=self)
-        self.canvas.draw()
+        canvas = FigureCanvasTkAgg(figure, master=self)
+        canvas.draw()
 
-        self.canvas.get_tk_widget().grid(row=2, column=0, padx=20, pady=10, columnspan=2)
+        canvas.get_tk_widget().grid(row=2, column=0, padx=20, pady=10, columnspan=2)
+        return graph, resourcesLines, canvas
 
     def updateGraph(self):
         for res in self.game.market.resources:
