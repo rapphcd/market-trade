@@ -16,19 +16,19 @@ class Player:
 
     def addMoney(self, amount):
         self.wallet += amount
-        self.updateWalletLabel()
+        self.game.interface.updateWalletLabel()
 
     def removeMoney(self, amount):
         self.wallet -= amount
-        self.updateWalletLabel()
+        self.game.interface.updateWalletLabel()
 
     def addResource(self, stock, amount):
         self.resources[stock] += amount
-        self.updateInvForStock(stock)
+        self.game.interface.updateInvForStock(stock)
 
     def removeResource(self, stock, amount):
         self.resources[stock] -= amount
-        self.updateInvForStock(stock)
+        self.game.interface.updateInvForStock(stock)
 
     def buyResource(self, resource, amount):
         if self.wallet < resource.price * amount:
@@ -38,21 +38,11 @@ class Player:
         self.addResource(resource.name, amount)
 
     def sellResource(self, resource, amount):
-        if self.resources[resource.name] == 0:
+        if self.resources[resource.name] == 0 or self.resources[resource.name] < amount:
             return
 
         self.addMoney(resource.price * amount)
         self.removeResource(resource.name, amount)
-
-    def updateInvForStock(self, stock):
-        self.game.interface.resourcesLabels[stock]["inv"].configure(text=f"{stock.capitalize()}: {self.resources[stock]}")
-        self.updateTotalLabel()
-
-    def updateTotalLabel(self):
-        self.game.interface.totalLabel.configure(text=f"Total: {self.getTotal()}$")
-
-    def updateWalletLabel(self):
-        self.game.interface.walletLabel.configure(text=f"Wallet: {self.wallet}$")
 
     def getTotal(self):
         total = self.wallet

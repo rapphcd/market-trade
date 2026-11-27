@@ -55,7 +55,7 @@ class Game:
         self.market.prepareNextMarket()
         self.market.updateMarket()
         self.interface.dayLabel.configure(text=f"Day {self.day}")
-        self.player.updateTotalLabel()
+        self.interface.updateTotalLabel()
         self.interface.updateGraph()
 
         if self.day == 16:

@@ -154,22 +154,32 @@ class Interface(customtkinter.CTk):
 
         self.canvas.draw_idle()
 
+    def updateInvForStock(self, stock):
+        self.resourcesLabels[stock]["inv"].configure(text=f"{stock.capitalize()}: {self.game.player.resources[stock]}")
+        self.updateTotalLabel()
+
+    def updateTotalLabel(self):
+        self.totalLabel.configure(text=f"Total: {self.game.player.getTotal()}$")
+
+    def updateWalletLabel(self):
+        self.walletLabel.configure(text=f"Wallet: {self.game.player.wallet}$")
+
     def initButtons(self):
 
         for i in range(len(self.game.market.resources)):
             res = self.game.market.resources[i]
 
-            def buy_command():
-                self.game.player.buyResource(res, 1)
+            def buy_command(stock=res):
+                self.game.player.buyResource(stock, 1)
 
-            def buy_max_command():
-                self.game.player.buyResource(res, self.game.player.wallet // res.price)
+            def buy_max_command(stock=res):
+                self.game.player.buyResource(stock, self.game.player.wallet // stock.price)
 
-            def sell_command():
-                self.game.player.sellResource(res, 1)
+            def sell_command(stock=res):
+                self.game.player.sellResource(stock, 1)
 
-            def sell_max_command():
-                self.game.player.sellResource(res, self.game.player.resources[res.name])
+            def sell_max_command(stock=res):
+                self.game.player.sellResource(stock, self.game.player.resources[stock.name])
 
             buy_button = ctk.CTkButton(
                 self.marketcard,
