@@ -14,7 +14,7 @@ class Interface(customtkinter.CTk):
 
         self.game = game
 
-        self.title("Black Market")
+        self.title("Market trade")
         self.geometry("1400x900")
         self.grid_columnconfigure((0, 1), weight=1)
 
