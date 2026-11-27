@@ -9,17 +9,17 @@ def runRound(game):
 
         if command[0] == "buy":
             command.pop(0)
-            handleBuyCommand(command,game)
-        elif command[0] == "sell" :
+            handleBuyCommand(command, game)
+        elif command[0] == "sell":
             command.pop(0)
             handleSellCommand(command, game)
-        elif command[0] == "inv" :
+        elif command[0] == "inv":
             handleInvCommand(game)
-        elif command[0] == "market" :
+        elif command[0] == "market":
             handleMarketCommand(game)
         elif command[0] == "next":
             end = 1
-        else :
+        else:
             print("Invalid command.")
             continue
 

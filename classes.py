@@ -1,5 +1,10 @@
 from random import  randint
 
+import customtkinter
+import customtkinter as ctk
+
+customtkinter.set_appearance_mode("system")
+
 RESOURCES = ["sol", "btc", "gold", "eur", "eth"]
 
 class Resource:
@@ -11,10 +16,11 @@ class Resource:
         return self.name.capitalize()
 
 class Market:
-    def __init__(self, r):
+    def __init__(self, r, game):
         self.prevPrices = [e.price for e in r]
         self.resources = r.copy()
         self.nextPrices = [e.price for e in r]
+        self.game = game
 
     def displayMarket(self):
         print("==================")
@@ -45,6 +51,7 @@ class Market:
 
         for i in range(len(self.resources)):
             self.resources[i].price = self.nextPrices[i]
+        self.game.updatePrices()
 
 class Player:
     def __init__(self, user_name):
@@ -78,10 +85,52 @@ class Player:
         self.removeResource(resource.name, amount)
         self.addMoney(resource.price * amount)
 
+class Interface(customtkinter.CTk):
+    def __init__(self, game):
+        super().__init__()
+
+        self.game = game
+
+        self.title("Black Market")
+        self.geometry("1200x800")
+        self.grid_columnconfigure((0, 1), weight=1)
+
+        self.marketcard = ctk.CTkFrame(
+            self,
+            corner_radius=15,
+            fg_color="#242424",
+            border_width=1,
+            border_color="#383838"
+        )
+
+        self.marketcard.grid(row=0, column=0, padx=20, pady=20, columnspan=2)
+
+        title = ctk.CTkLabel(
+            self.marketcard,
+            text="Market",
+            text_color="#ffffff"
+        )
+
+        title.pack(padx=20, pady=10)
+
+        resourcesLabels = {}
+
+        for res in self.game.market.resources:
+            value = ctk.CTkLabel(
+                self.marketcard,
+                text=f"{res.name.capitalize()}: {res.price}",
+                text_color="#ffffff",
+                font=("Arial", 32),
+            )
+            resourcesLabels[res.name] = value
+            value.pack(pady=10, padx=10)
+
+        self.resourcesLabels = resourcesLabels
 
 class Game:
     def __init__(self, player_name):
         self.player = Player(player_name)
+
 
         resources = []
         stockResources = {}
@@ -91,9 +140,20 @@ class Game:
             resources.append(res)
             stockResources[resource] = res
 
-        self.market = Market(resources)
+        self.market = Market(resources, self)
 
         self.stockResources = stockResources
+
+        self.interface = Interface(self)
+
+        self.market.prepareNextMarket()
+        self.market.updateMarket()
+
+        self.interface.mainloop()
+
+    def updatePrices(self):
+        for res in self.market.resources:
+            self.interface.resourcesLabels[res.name].configure(text=f"{res.name.capitalize()}: {res.price}")
 
     def displayPlayerWallet(self):
         player = self.player
