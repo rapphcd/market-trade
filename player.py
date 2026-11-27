@@ -46,7 +46,7 @@ class Player:
 
     def getTotal(self):
         total = self.wallet
-        for [k, v] in self.resources.items():
-            total += v * self.game.stockResources[k].price
+        for res in self.game.market.resources:
+            total += self.resources[res.name] * res.price
 
         return total

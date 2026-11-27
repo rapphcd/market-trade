@@ -6,32 +6,27 @@ from interface import Interface
 
 class Game:
     def __init__(self, player_name):
-        self.player = Player(player_name, self)
-        self.interface = None
-
-        self.day = 0
-
         resources = []
-        stockResources = {}
         prices = {}
 
         for resource in RESOURCES:
             res = Resource(resource, 30)
             resources.append(res)
-            stockResources[resource] = res
             prices[resource] = [30]
 
+        self.day = 0
         self.days = [0]
         self.prices = prices
 
-        self.market = Market(resources, self)
+        self.player = Player(player_name, self)
 
-        self.stockResources = stockResources
+        self.market = Market(resources, self)
 
         self.interface = Interface(self)
 
     def updatePrices(self):
         self.days.append(self.day)
+
         for i in range(len(self.market.resources)):
             res = self.market.resources[i]
             old_price = self.market.prevPrices[i]
@@ -44,13 +39,11 @@ class Game:
                 self.interface.resourcesLabels[res.name]["prog"].configure(text=f"{"+" if res.price > old_price else ""}{res.price - old_price}$", text_color=f"{"#00FF00" if res.price >= old_price else "#FF0000"}")
 
     def startGame(self):
-
         self.interface.initButtons()
         self.nextDay()
         self.interface.mainloop()
 
     def nextDay(self):
-
         self.day +=1
         self.market.prepareNextMarket()
         self.market.updateMarket()
