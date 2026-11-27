@@ -42,19 +42,19 @@ class Interface(customtkinter.CTk):
             self.marketcard,
             text="Market",
             text_color="#111111",
-            font=("Arial", 24)
+            font=("Arial", 28, "bold")
         )
 
-        market_title.grid(row=0, column=1, padx=50, pady=20)
+        market_title.grid(row=0, column=0, padx=50, pady=20)
 
         inv_title = ctk.CTkLabel(
             self.invcard,
             text="Inventory",
             text_color="#111111",
-            font=("Arial", 24)
+            font=("Arial", 28, "bold")
         )
 
-        inv_title.grid(row=0, column=1, padx=50, pady=20)
+        inv_title.grid(row=0, column=0, padx=50, pady=20)
 
         self.totalLabel = ctk.CTkLabel(
             self.invcard,
@@ -72,7 +72,7 @@ class Interface(customtkinter.CTk):
 
         self.next_button = ctk.CTkButton(
             self,
-            text="Next",
+            text="Next day",
             text_color="#ffffff",
             font=("Arial", 32),
             command=self.game.nextDay
@@ -80,8 +80,8 @@ class Interface(customtkinter.CTk):
 
         self.next_button.grid(row=0, column=1, pady=10, padx=10, sticky="e")
 
-        self.totalLabel.grid(row=2, column=2, padx=50, pady=20, sticky="e")
-        self.walletLabel.grid(row=4, column=2, padx=50, pady=20, sticky="e")
+        self.totalLabel.grid(row=2, column=3, padx=50, pady=20, sticky="w")
+        self.walletLabel.grid(row=4, column=3, padx=50, pady=20, sticky="w")
 
         resourcesLabels = {}
 
@@ -133,6 +133,9 @@ class Interface(customtkinter.CTk):
             def sell_command():
                 self.game.player.sellResource(res, 1)
 
+            def sell_max_command():
+                self.game.player.sellResource(res, self.game.player.resources[res.name])
+
             buy_button = ctk.CTkButton(
                 self.marketcard,
                 text="Buy 1",
@@ -151,14 +154,23 @@ class Interface(customtkinter.CTk):
 
             sell_button = ctk.CTkButton(
                 self.invcard,
-                text="-",
+                text="Sell 1",
                 text_color="#ffffff",
                 font=("Arial", 32),
                 command=sell_command
             )
 
+            sell_max = ctk.CTkButton(
+                self.invcard,
+                text="Sell all",
+                text_color="#ffffff",
+                font=("Arial", 32),
+                command=sell_max_command
+            )
+
             buy_button.grid(row=i + 1, column=3, pady=10, padx=10, sticky="e")
             buy_max.grid(row=i + 1, column=4, pady=10, padx=10, sticky="e")
 
-            sell_button.grid(row=i + 1, column=1, pady=10, padx=10, sticky="w")
+            sell_button.grid(row=i + 1, column=1, pady=10, padx=10, sticky="e")
+            sell_max.grid(row=i + 1, column=2, pady=10, padx=10, sticky="e")
 
