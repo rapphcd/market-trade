@@ -3,6 +3,7 @@ from player import Player
 from resource import Resource
 from market import Market
 from interface import Interface
+from commands import handleBuyCommand, handleSellCommand, handleInvCommand, handleMarketCommand
 
 class Game:
     def __init__(self, player_name):
@@ -31,6 +32,42 @@ class Game:
     def updatePrices(self):
         for res in self.market.resources:
             self.interface.resourcesLabels[res.name].configure(text=f"{res.name.capitalize()}: {res.price}")
+
+    def startGame(self):
+        self.market.prepareNextMarket()
+        day = 0
+        while day < 15:
+            day += 1
+            self.market.updateMarket()
+            self.market.displayMarket()
+            print(f"Day {day}")
+            print("/buy , /sell , /inv , /market , /next")
+            self.runRound()
+            self.market.prepareNextMarket()
+
+        self.end()
+
+    def runRound(self):
+        end = 0
+
+        while end == 0:
+            command = input("/").split(" ")
+
+            if command[0] == "buy":
+                command.pop(0)
+                handleBuyCommand(command, self)
+            elif command[0] == "sell":
+                command.pop(0)
+                handleSellCommand(command, self)
+            elif command[0] == "inv":
+                handleInvCommand(self)
+            elif command[0] == "market":
+                handleMarketCommand(self)
+            elif command[0] == "next":
+                end = 1
+            else:
+                print("Invalid command.")
+                continue
 
     def displayPlayerWallet(self):
         player = self.player
