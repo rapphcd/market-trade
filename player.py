@@ -1,7 +1,7 @@
 from main import RESOURCES
 
 class Player:
-    def __init__(self, user_name):
+    def __init__(self, user_name, game):
         self.wallet = 100
         self.name = user_name
 
@@ -12,22 +12,51 @@ class Player:
 
         self.resources = resources
 
+        self.game = game
+
     def addMoney(self, amount):
         self.wallet += amount
+        self.updateWalletLabel()
 
     def removeMoney(self, amount):
         self.wallet -= amount
+        self.updateWalletLabel()
 
     def addResource(self, stock, amount):
         self.resources[stock] += amount
+        self.updateInvForStock(stock)
 
     def removeResource(self, stock, amount):
         self.resources[stock] -= amount
+        self.updateInvForStock(stock)
 
     def buyResource(self, resource, amount):
-        self.addResource(resource.name, amount)
+        if self.wallet < resource.price * amount:
+            return
+
         self.removeMoney(resource.price * amount)
+        self.addResource(resource.name, amount)
 
     def sellResource(self, resource, amount):
-        self.removeResource(resource.name, amount)
+        if self.resources[resource.name] == 0:
+            return
+
         self.addMoney(resource.price * amount)
+        self.removeResource(resource.name, amount)
+
+    def updateInvForStock(self, stock):
+        self.game.interface.resourcesLabels[stock]["inv"].configure(text=f"{stock.capitalize()}: {self.resources[stock]}")
+        self.updateTotalLabel()
+
+    def updateTotalLabel(self):
+        self.game.interface.totalLabel.configure(text=f"Total: {self.getTotal()}$")
+
+    def updateWalletLabel(self):
+        self.game.interface.walletLabel.configure(text=f"Wallet: {self.wallet}$")
+
+    def getTotal(self):
+        total = self.wallet
+        for [k, v] in self.resources.items():
+            total += v * self.game.stockResources[k].price
+
+        return total

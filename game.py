@@ -3,12 +3,13 @@ from player import Player
 from resource import Resource
 from market import Market
 from interface import Interface
-from commands import handleBuyCommand, handleSellCommand, handleInvCommand, handleMarketCommand
 
 class Game:
     def __init__(self, player_name):
-        self.player = Player(player_name)
+        self.player = Player(player_name, self)
+        self.interface = None
 
+        self.day = 0
 
         resources = []
         stockResources = {}
@@ -24,74 +25,35 @@ class Game:
 
         self.interface = Interface(self)
 
-        self.market.prepareNextMarket()
-        self.market.updateMarket()
-
-        self.interface.mainloop()
-
     def updatePrices(self):
-        for res in self.market.resources:
-            self.interface.resourcesLabels[res.name].configure(text=f"{res.name.capitalize()}: {res.price}")
+        for i in range(len(self.market.resources)):
+            res = self.market.resources[i]
+            old_price = self.market.prevPrices[i]
+
+            self.interface.resourcesLabels[res.name]["infos"].configure(text=f"{res.name.capitalize()}: {res.price}")
+            self.interface.resourcesLabels[res.name]["prog"].configure(text=f"{"+" if res.price > old_price else ""}{res.price - old_price}$")
 
     def startGame(self):
+
+        self.interface.initButtons()
+        self.nextDay()
+        self.interface.mainloop()
+
+    def nextDay(self):
+        if self.day == 15:
+            self.end()
+            return
+
+        self.day +=1
         self.market.prepareNextMarket()
-        day = 0
-        while day < 15:
-            day += 1
-            self.market.updateMarket()
-            self.market.displayMarket()
-            print(f"Day {day}")
-            print("/buy , /sell , /inv , /market , /next")
-            self.runRound()
-            self.market.prepareNextMarket()
+        self.market.updateMarket()
+        self.interface.dayLabel.configure(text=f"Day {self.day}")
+        self.player.updateTotalLabel()
 
-        self.end()
-
-    def runRound(self):
-        end = 0
-
-        while end == 0:
-            command = input("/").split(" ")
-
-            if command[0] == "buy":
-                command.pop(0)
-                handleBuyCommand(command, self)
-            elif command[0] == "sell":
-                command.pop(0)
-                handleSellCommand(command, self)
-            elif command[0] == "inv":
-                handleInvCommand(self)
-            elif command[0] == "market":
-                handleMarketCommand(self)
-            elif command[0] == "next":
-                end = 1
-            else:
-                print("Invalid command.")
-                continue
-
-    def displayPlayerWallet(self):
-        player = self.player
-        total = player.wallet
-        empty = True
-
-        print("==================")
-        print(f"Wallet: {player.wallet}$")
-        print("------------------")
-
-        for [k, v] in player.resources.items():
-            total += v * self.stockResources[k].price
-            if v > 0:
-                empty = False
-                print(f"{k.capitalize()}: {v}")
-
-        if not empty:
-            print("------------------")
-        print(f"Total: : {total}$")
-        print("==================")
 
     def end(self):
-        self.displayPlayerWallet()
         money = self.player.wallet
+
 
         for [k,v] in self.player.resources.items():
             money += (int(v) * int(self.stockResources[k].price))
