@@ -1,5 +1,7 @@
-from classes import Game
+from game import Game
 from commands import handleBuyCommand, handleSellCommand, handleInvCommand, handleMarketCommand
+
+RESOURCES = ["sol", "btc", "gold", "eur", "eth"]
 
 def runRound(game):
     end = 0
