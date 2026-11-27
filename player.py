@@ -1,4 +1,4 @@
-from main import RESOURCES
+from config import RESOURCES
 
 class Player:
     def __init__(self, user_name, game):

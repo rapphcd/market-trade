@@ -2,7 +2,7 @@ import customtkinter
 import customtkinter as ctk
 from matplotlib.ticker import MultipleLocator
 
-from main import RESOURCES_COLORS
+from config import RESOURCES_COLORS
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
 

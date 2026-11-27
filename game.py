@@ -1,4 +1,4 @@
-from main import RESOURCES
+from config import RESOURCES
 from player import Player
 from resource import Resource
 from market import Market
