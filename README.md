@@ -9,6 +9,9 @@ Start with $100. Trade your way to $450 before the market closes.
 
 Market trade is a single-player Python trading game. You start with an empty inventory and $100 in cash. Buy and sell SOL, BTC, gold, EUR, and ETH as prices change from day to day. To win, finish with at least $450 in cash and assets combined.
 
+
+<img src="preview.png" alt="Market trade preview" height="300px"/>
+
 ## Features
 
 - Five tradable assets with independently changing daily prices.
