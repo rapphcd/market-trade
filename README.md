@@ -1,3 +1,6 @@
+
+<img src="market_trade.png" alt="Market trade logo" height="150px" align="right" />
+
 # Market trade
 
 Start with $100. Trade your way to $450 before the market closes.
